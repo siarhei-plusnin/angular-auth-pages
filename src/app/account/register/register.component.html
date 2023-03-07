@@ -1,0 +1,124 @@
+<div class="text-center">
+  <h1>Sign up</h1>
+</div>
+
+<div class="register-form p-4">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Login</label>
+      <input type="text" formControlName="login" class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['login'].errors }" />
+      <div *ngIf="submitted && f['login'].errors" class="invalid-feedback">
+        <div *ngIf="f['login'].errors['required']">login is required</div>
+        <div *ngIf="f['login'].errors['minlength']">
+          Login must be at least 6 characters
+        </div>
+        <div *ngIf="f['login'].errors['maxlength']">
+          Login must not exceed 20 characters
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="text" formControlName="email" class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['email'].errors }" />
+      <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+        <div *ngIf="f['email'].errors['required']">Email is required</div>
+        <div *ngIf="f['email'].errors['email']">Email is invalid</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" formControlName="password" class="form-control"
+        [ngClass]="{ 'is-invalid': submitted && f['password'].errors }" />
+      <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+        <div *ngIf="f['password'].errors['required']">Password is required</div>
+        <div *ngIf="f['password'].errors['minlength']">
+          Password must be at least 6 characters
+        </div>
+        <div *ngIf="f['password'].errors['maxlength']">
+          Username must not exceed 40 characters
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group d-flex flex-column">
+      <label>Phone Numbers</label>
+      <input type="text" formControlName="phoneNumber" class="form-control" [ngClass]="{
+        'is-invalid': f['phoneNumber'].touched && f['phoneNumber'].errors
+      }" />
+    <button (click)="addPhoneNumber()" type="button" class="btn btn-secondary">
+      Add
+    </button>
+
+      <div *ngIf="f['phoneNumber'].touched && f['phoneNumber'].errors" class="invalid-feedback">
+        <div *ngIf="f['phoneNumber'].errors['required']">
+          Phone number cannot be empty
+        </div>
+        <div *ngIf="f['phoneNumber'].errors['pattern']">
+          Incorrect phone number format
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <table>
+        <div *ngFor="let phoneNumber of phoneNumbersValues; let i = index">
+          <tr>
+            <td>
+              {{ phoneNumber }}
+            </td>
+            <td>
+              <button (click)="deletePhoneNumber(i)" type="button" class="btn btn-secondary">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </div>
+      </table>
+    </div>
+
+    <div class="form-group d-flex flex-column">
+      <label>languages</label>
+
+      <select class="custom-select" (change)="changeLang($event)" formControlName="language" [value]="1">
+        <option *ngFor="let lang of languageVariants" [ngValue]="lang">{{lang}}</option>
+      </select>
+    <button (click)="addLanguage()" type="button" class="btn btn-secondary">
+      Add
+    </button>
+
+      <div *ngIf="f['language'].touched && f['language'].errors" class="invalid-feedback">
+        <div *ngIf="f['language'].errors['required']">
+          language cannot be empty
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <table>
+        <div *ngFor="let language of languagesValues; let i = index">
+          <tr>
+            <td>
+              {{ language }}
+            </td>
+            <td>
+              <button (click)="deleteLanguage(i)" type="button" class="btn btn-secondary">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </div>
+      </table>
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary">Register</button>
+      <button type="button" (click)="onReset()" class="btn btn-warning float-right">
+        Reset
+      </button>
+    </div>
+  </form>
+</div>
