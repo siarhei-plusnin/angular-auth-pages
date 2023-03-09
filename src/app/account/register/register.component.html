@@ -43,78 +43,65 @@
         </div>
       </div>
     </div>
-
-    <div class="form-group d-flex flex-column">
-      <label>Phone Numbers</label>
-      <input type="text" formControlName="phoneNumber" class="form-control" [ngClass]="{
-        'is-invalid': f['phoneNumber'].touched && f['phoneNumber'].errors
-      }" />
-    <button (click)="addPhoneNumber()" type="button" class="btn btn-secondary">
-      Add
-    </button>
-
-      <div *ngIf="f['phoneNumber'].touched && f['phoneNumber'].errors" class="invalid-feedback">
-        <div *ngIf="f['phoneNumber'].errors['required']">
-          Phone number cannot be empty
-        </div>
-        <div *ngIf="f['phoneNumber'].errors['pattern']">
-          Incorrect phone number format
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <table>
-        <div *ngFor="let phoneNumber of phoneNumbersValues; let i = index">
-          <tr>
-            <td>
-              {{ phoneNumber }}
-            </td>
-            <td>
-              <button (click)="deletePhoneNumber(i)" type="button" class="btn btn-secondary">
-                Delete
-              </button>
-            </td>
-          </tr>
-        </div>
-      </table>
-    </div>
-
-    <div class="form-group d-flex flex-column">
-      <label>languages</label>
-
-      <select class="custom-select" (change)="changeLang($event)" formControlName="language" [value]="1">
-        <option *ngFor="let lang of languageVariants" [ngValue]="lang">{{lang}}</option>
-      </select>
-    <button (click)="addLanguage()" type="button" class="btn btn-secondary">
-      Add
-    </button>
-
-      <div *ngIf="f['language'].touched && f['language'].errors" class="invalid-feedback">
-        <div *ngIf="f['language'].errors['required']">
-          language cannot be empty
-        </div>
-      </div>
-    </div>
-
-    <div>
-      <table>
-        <div *ngFor="let language of languagesValues; let i = index">
-          <tr>
-            <td>
-              {{ language }}
-            </td>
-            <td>
-              <button (click)="deleteLanguage(i)" type="button" class="btn btn-secondary">
-                Delete
-              </button>
-            </td>
-          </tr>
-        </div>
-      </table>
-    </div>
-
+    
     <div class="form-group">
+      <button (click)="addPhoneNumber()" type="button" class="btn btn-secondary w-100">
+        Add phone number
+      </button>
+      <div formArrayName="phoneNumbers">
+        <div *ngFor="let pn of phoneNumbers.controls; let i=index" class="mt-2">
+          <div [formGroupName]="i">
+            <label>Phone number {{i + 1}}</label>
+            <div class="d-flex justify-content-between">
+              <div>
+                <input type="text" formControlName="value" class="form-control" [ngClass]="{
+                  'is-invalid': submitted && pn.controls['value'].touched && pn.controls['value'].errors
+                }" />
+                <div *ngIf="pn.controls['value'].touched && pn.controls['value'].errors" class="invalid-feedback">
+                  <div *ngIf="pn.controls['value'].errors['required']">
+                    Phone number cannot be empty
+                  </div>
+                  <div *ngIf="pn.controls['value'].errors['pattern']">
+                    Incorrect phone number format
+                  </div>
+                </div>
+              </div>
+              <button (click)="deletePhoneNumber(i)" type="button" class="btn btn-secondary align-self-baseline">Remove</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <button (click)="addLanguage()" type="button" class="btn btn-secondary w-100">
+        Add language
+      </button>
+      <div formArrayName="languages">
+        <div *ngFor="let item of languages.controls; let i=index" class="mt-2">
+          <div [formGroupName]="i">
+            <label>Language {{i + 1}}</label>
+            <div class="d-flex justify-content-between">
+              <div>
+                <select class="form-control" (change)="changeLang($event, item)" formControlName="value" [ngClass]="{
+                  'is-invalid': submitted && item.controls['value'].touched && item.controls['value'].errors
+                }" >
+                  <option *ngFor="let lang of languageVariants" [ngValue]="lang">{{lang}}</option>
+                </select>
+                <div *ngIf="item.controls['value'].touched && item.controls['value'].errors" class="invalid-feedback">
+                  <div *ngIf="item.controls['value'].errors['required']">
+                    Language cannot be empty
+                  </div>
+                </div>
+              </div>
+              <button (click)="deleteLanguage(i)" type="button" class="btn btn-secondary align-self-baseline">Remove</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group mt-2">
       <button type="submit" class="btn btn-primary">Register</button>
       <button type="button" (click)="onReset()" class="btn btn-warning float-right">
         Reset

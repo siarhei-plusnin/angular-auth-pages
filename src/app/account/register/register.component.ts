@@ -17,14 +17,7 @@ export class RegisterComponent implements OnInit {
   form: FormGroup;
   submitted = false;
 
-  phoneNumberValidators = [
-    Validators.required,
-    Validators.pattern(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g)
-  ];
-
-  languageValidators = [Validators.required];
-
-  languageVariants: any = ['English', 'Russian', 'Chinese']
+  languageVariants: string[] = ['English', 'Russian', 'Chinese']
 
   constructor(private formBuilder: FormBuilder) {}
 
@@ -33,10 +26,8 @@ export class RegisterComponent implements OnInit {
       login: ['', [Validators.required, Validators.maxLength(25)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
-      phoneNumber: [],
-      phoneNumberArray: this.formBuilder.array([]),
-      language: [],
-      languageArray: this.formBuilder.array([]),
+      phoneNumbers: this.formBuilder.array([]),
+      languages: this.formBuilder.array([]),
     });
   }
 
@@ -44,118 +35,56 @@ export class RegisterComponent implements OnInit {
     return this.form.controls;
   }
 
-  get phoneNumbersValues(): string[] {
-    return this.phoneNumbers.controls.map((number) => {
-      let phoneNumbersFormGroup = number as FormGroup;
-      return phoneNumbersFormGroup.controls['value'].value;
-    });
-  }
-
   get phoneNumbers(): FormArray<FormGroup> {
-    return this.form.get('phoneNumberArray') as FormArray<FormGroup>;
-  }
-
-  get languagesValues(): string[] {
-    return this.languages.controls.map((lang) => {
-      let langFormGroup = lang as FormGroup;
-      return langFormGroup.controls['value'].value;
-    });
+    return this.form.get('phoneNumbers') as FormArray;
   }
 
   get languages(): FormArray<FormGroup> {
-    return this.form.get('languageArray') as FormArray<FormGroup>;
+    return this.form.get('languages') as FormArray;
   }
 
   newPhoneNumber(): FormGroup {
     return this.formBuilder.group({
-      value: '',
+      value: ['',[
+        Validators.required,
+        Validators.pattern(/^[+]*[(]{0,1}[0-9]{1,3}[)]{0,1}[-\s\./0-9]*$/g)
+      ]],
     });
   }
 
   addPhoneNumber() {
-    this.addPhoneNumberValidators();
-    this.form.controls['phoneNumber'].markAsTouched();
-
-    if (!this.form.controls['phoneNumber'].valid) {
-      return;
-    }
-
     this.phoneNumbers.push(this.newPhoneNumber());
-    let phoneNumber = this.phoneNumbers.length - 1;
-    this.phoneNumbers.controls[phoneNumber]
-      .get('value')
-      .setValue(this.form.get('phoneNumber').value);
   }
 
   deletePhoneNumber(index: number) {
     this.phoneNumbers.removeAt(index);
   }
 
-  removePhoneNumberValidators() {
-    this.form.controls['phoneNumber'].removeValidators(
-      this.phoneNumberValidators
-    );
-    this.form.controls['phoneNumber'].updateValueAndValidity();
-  }
-
-  addPhoneNumberValidators() {
-    this.form.controls['phoneNumber'].addValidators(this.phoneNumberValidators);
-    this.form.controls['phoneNumber'].updateValueAndValidity();
-  }
-
   newLanguage(): FormGroup {
     return this.formBuilder.group({
-      value: '',
+      value: ['',[
+        Validators.required
+      ]],
     });
   }
 
   addLanguage() {
-    this.addlanguageValidators();
-    this.form.controls['language'].markAsTouched();
-
-    if (!this.form.controls['language'].valid) {
-      return;
-    }
-
     this.languages.push(this.newLanguage());
-    let lang = this.languages.length - 1;
-    this.languages.controls[lang]
-      .get('value')
-      .setValue(this.form.get('language').value);
   }
 
   deleteLanguage(index: number) {
     this.languages.removeAt(index);
   }
 
-  removelanguageValidators() {
-    this.form.controls['language'].removeValidators(
-      this.languageValidators
-    );
-    this.form.controls['language'].updateValueAndValidity();
-  }
-
-  addlanguageValidators() {
-    this.form.controls['language'].addValidators(this.languageValidators);
-    this.form.controls['language'].updateValueAndValidity();
-  }
-
-  changeLang(e) {
-    this.language.setValue(e.target.value, {
+  changeLang(e: any, item: any) {
+    item.controls["value"].setValue(e.target.value, {
       onlySelf: true
     })
   }
 
-  get language() {
-    return this.form.get('language');
-  }
-
   onSubmit(): void {
-    this.removelanguageValidators();
-    this.removePhoneNumberValidators();
-
     this.submitted = true;
-
+    this.form.markAllAsTouched();
     if (this.form.invalid) {
       return;
     }
